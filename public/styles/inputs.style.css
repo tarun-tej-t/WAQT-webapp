@@ -1,0 +1,339 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-image: url('/img/background.jpg');
+    background-color: rgba(255, 255, 255, 0.1);
+    height: 100vh;
+}
+
+.container {
+    max-height: 100vh;
+}
+
+.navbar {
+    background-color: var(--bs-cyan) !important;
+}
+
+.page-footer {
+    background-color: var(--bs-cyan) !important;
+}
+
+input::placeholder {
+    color: rgb(184, 184, 184) !important;
+}
+
+.col-md-2 {
+    margin-right: -2rem !important;
+    padding-top: 0.5rem !important;
+}
+
+.col-md-5 {
+    margin-right: 0rem !important;
+}
+
+.col-md-4 {
+    width: 19rem !important;
+    padding-top: 0.2rem !important;
+}
+
+.btns {
+    margin-left: 0px;
+}
+
+.btns>div {
+    width: 300px !important;
+    height: 40px !important;
+}
+
+.add {
+    height: 40px;
+    width: 300px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 17px;
+}
+
+.remove {
+    height: 40px;
+    width: 40px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 17px;
+}
+
+.back {
+    height: 40px;
+    width: 40px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 17px;
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 428px) {
+    .navbar>.container>.col-xs-7 {
+        margin-left: -35px !important;
+    }
+
+    .navbar>.container>.container>.col-xs-4 {
+        display: none !important;
+    }
+
+    .navbar>.container>.container>.col-xs-1>img {
+        height: 75px !important;
+    }
+
+    .navbar>.container>.container {
+        justify-content: flex-end !important;
+        width: 140px !important;
+    }
+
+    .navbar>.container {
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .col-xs-7>a>img {
+        height: 75px !important;
+    }
+
+    .col-xs-1>img {
+        height: 50px !important;
+    }
+
+    .col-xs-4 {
+        font-size: 10px !important;
+        width: 80% !important;
+    }
+
+    .parameter {
+        height: 50px;
+    }
+
+    .parameter>button {
+        font-size: 12px;
+    }
+
+    #btn {
+        margin-bottom: 40px;
+        margin-left: 12px;
+    }
+    .btns {
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media only screen and (min-width: 429px) and (max-width: 810px) {
+    .btns {
+        margin-left: 60px;
+    }
+
+    #btn {
+        margin-bottom: 60px;
+        margin-left: 58px;
+    }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 768px) {
+    .btns {
+        margin-left: 40px;
+    }
+}
+
+@media only screen and (min-width: 1024px) and (max-width: 1024px) {
+    .btns {
+        margin-left: 40px;
+    }
+}
+
+.dropdown-toggle {
+    width: auto;
+    background-color: #fff;
+    color: #000;
+}
+
+.btn::after {
+    float: right;
+    margin-top: 10px;
+}
+
+.dropdown-menu {
+    width: 40vw;
+    height: 220vh;
+}
+
+.dropdown-menu>li {
+    width: 87%;
+    margin-left: 30px;
+}
+
+form {
+    width: 90vw;
+    margin-right: 100px;
+    margin-bottom: 20px;
+    display: none;
+}
+
+dialog {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 50%;
+    width: auto;
+    border: none;
+}
+
+#parent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.dropdown {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    width: auto;
+}
+
+#map1 {
+    width: 90vw;
+    height: 55vh;
+}
+
+#inputs>input {
+    width: 100%;
+    padding-left: 5px;
+}
+
+#inputs {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    height: 100px;
+}
+
+#parentsparent {
+    display: flex;
+    flex-direction: column;
+    place-items: start;
+    height: auto;
+}
+
+@media only screen and (max-width: 428px) {
+    #parentsparent {
+        flex-direction: column;
+        place-items: center;
+    }
+
+    #parentsparentchild {
+        margin-top: 30px;
+    }
+
+    #map1 {
+        width: 300px;
+    }
+
+    .dropdown-menu {
+        transform: translate3d(-1.5px, -45px, 0px) !important;
+    }
+
+    main {
+        padding-left: 0px !important;
+    }
+
+    .dropdown-toggle {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    dialog {
+        width: 260px;
+    }
+
+    .dropdown-menu {
+        width: 100%;
+        margin-top: 30px !important;
+    }
+
+    #submit {
+        margin-left: 70px;
+    }
+}
+
+#submit {
+    background-color: #0dcaf0;
+    border: none;
+    cursor: pointer;
+    height: 35px;
+    width: 100px;
+    border-radius: 5px;
+    color: #fff;
+    margin-top: 1em;
+}
+
+#submit:hover {
+    border: 1px solid #fff;
+}
+
+main {
+    padding-left: 50px;
+    height: 90vh !important;
+}
+
+select {
+    width: 100% !important;
+    height: 120% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    height: 20% !important;
+    width: 50% !important;
+    /* padding: 0.25 rem !important; */
+}
+
+.alert-dismissible>.btn-close {
+    display: flex;
+    align-items: center;
+    height: 20% !important;
+}
+
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: -5px !important;
+}
+
+.alert-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.close {
+    color: #fff;
+    height: 38px;
+    width: 70px;
+    border: none;
+}
+
+.mapboxgl-marker:hover {
+    cursor: pointer;
+}
+

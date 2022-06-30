@@ -1,0 +1,227 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: url('/img/background.jpg') no-repeat fixed center;
+    height: 100vh;
+}
+
+#submit {
+    margin-top: 1em;
+}
+
+.container {
+    max-height: 100vh;
+}
+
+.mt-n1 {
+    margin-right: -10rem !important;
+}
+
+.page-footer {
+    background-color: var(--bs-cyan) !important;
+}
+
+.navbar {
+    background-color: var(--bs-cyan) !important;
+}
+
+.btn {
+    /* background-color: var(--bs-cyan) !important; */
+    margin-bottom: 5rem !important;
+}
+
+form > div > div {
+    width: 85% !important;
+}
+
+select {
+    width: 100% !important;
+    height: 120% !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+}
+
+.form-group-xs {
+    position: relative !important;
+    margin-bottom: 30px !important;
+    /* background-color: coral !important; */
+}
+
+.form-group-xs label {
+    display: inline-block !important;
+    margin-bottom: 0px;
+    margin-right: 10px;
+}
+
+.form-group-xs input {
+    position: absolute !important;
+    top: 0px !important;
+    left: 90px !important;
+    padding: 7px !important;
+    width: 90% !important;
+    font-size: 14px !important;
+}
+
+.form-group-xs select {
+    position: absolute;
+    top: 0px !important;
+    left: 90px !important;
+    padding: 7px !important;
+    width: 90% !important;
+    height: 37px !important;
+    font-size: 14px !important;
+    background-color: rgb(245, 245, 245) !important;
+    border: 1px solid rgb(211, 211, 211);
+    border-radius: 5px;
+}
+
+.form-group-xs small {
+    position: absolute !important;
+    top: 40px !important;
+    left: 80px !important;
+    color: #e74c3c !important;
+    visibility: hidden !important;
+}
+
+.form-group-xs.success input {
+    border: 2px solid #2ecc71;
+}
+
+.form-group-xs.error input {
+    border: 2px solid #e74c3c;
+}
+
+.form-group-xs.success select {
+    border: 2px solid #2ecc71;
+}
+
+.form-group-xs.error select {
+    border: 2px solid #e74c3c !important;
+}
+
+.form-group-xs.success small {
+    visibility: hidden;
+}
+
+.form-group-xs.error small {
+    visibility: visible !important;
+}
+
+button {
+    font-size: 17px !important;
+}
+
+@media only screen and (max-width: 428px) {
+    .navbar > .container > .col-xs-7 {
+        margin-left: -35px !important;
+    }
+    .navbar > .container > .container > .col-xs-4 {
+        display: none !important;
+    }
+    .navbar > .container > .container > .col-xs-1 > img {
+        height: 75px !important;
+    }
+    .navbar > .container > .container {
+        justify-content: flex-end !important;
+        width: 140px !important;
+    }
+    .navbar > .container {
+        display: flex;
+        justify-content: center !important;
+    }
+    .col-xs-7 > a > img {
+        height: 75px !important;
+    }
+    .col-xs-1 > img {
+        height: 50px !important;
+    }
+    .col-xs-4 {
+        font-size: 10px !important;
+    }
+    .form-group-xs {
+        width: 60% !important;
+    }
+    form > div > div {
+        width: 77% !important;
+    }
+    form > div > input {
+        width: 77% !important;
+    }
+    .form-group-xs select {
+        width: 81% !important;
+    }
+    .form-group-xs input {
+        width: 80% !important;
+    }
+    .submit-btn {
+        width: 30% !important;
+        height: 45px;
+    }
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start !important;
+        margin-left: 50px;
+    }
+    .alert {
+        height: 75% !important;
+    }
+    .alert-message {
+        height: auto;
+    }    
+    .alert-dismissible>.btn-close {
+        height: 10% !important;
+    }
+}
+
+@media only screen and (max-width: 810px) {
+    .col-1 {
+        margin-right: 0rem !important;
+    }
+}
+
+input::placeholder {
+    color: rgb(184, 184, 184) !important;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+form > div {
+    width: 50% !important;
+}
+
+.alert {
+    display: flex;
+    align-items: center;
+    height: auto;
+    width: auto;
+    /* padding: 0.25 rem !important; */
+}
+
+.alert-dismissible > .btn-close {
+    display: flex;
+    align-items: center;
+    height: 20% !important;
+}
+
+.alert-dismissible .btn-close {
+    position: absolute;
+    top: -5px !important;
+}
+
+.alert-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+}

@@ -1,0 +1,555 @@
+<link rel="stylesheet" href="/styles/output.style.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
+    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
+    crossorigin="" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<main class="overflow-auto">
+    <div class="container text-center">
+        <h3 class="fw-bold pt-2 text-white">Water Quality Status</h3>
+    </div>
+    <div id="year" class="container">
+        <select name="year" id="select_year">
+            <option value="all_data" selected >All data</option>            
+        </select>
+    </div>
+    <div class="container d-flex flex-column">
+        <div class="row w-100 text-center mt-3 text-white bg-primary align-self-center">
+            <h3 class="wqi_header">Sample Location</h3>
+        </div>
+        
+        <div id="siteMap" style="height: 33rem;"></div>
+    </div>
+    <div class="container d-flex flex-column align-items-center mt-3">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Location-wise Water Quality</h3>
+        </div>
+        <table class="table text-center text-wrap table-1 w-100">
+            <thead>                
+                <tr class="t-h">
+                    <th rowspan="2">Sl.no</th>
+                    <th colspan="3">Location</th>
+                    <th rowspan="2">WQI</th>
+                    <th rowspan="2">Water Quality</th>                    
+                </tr>
+                <tr class="t-h">
+                    <th>Address</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>              
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+
+    <!-- <div class="container d-flex flex-column align-items-center">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">WQI Classification</h3>
+        </div>
+        <table class="table text-center text-wrap table-2 w-100">
+            <thead>                
+                <tr class="t-h">
+                    <th>WQI</th>
+                    <th>Water Quality</th>
+                    <th>Grading</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="t-1">
+                    <td>0 - 25</td>
+                    <td>Excellent</td>
+                    <td>A</td>
+                </tr>
+                <tr class="t-2">
+                    <td>26 - 50</td>
+                    <td>Good</td>
+                    <td>B</td>
+                </tr>
+                <tr class="t-3">
+                    <td>51 - 75</td>
+                    <td>Poor</td>
+                    <td>C</td>
+                </tr>
+                <tr class="t-4">
+                    <td>76 - 100</td>
+                    <td>Very Poor</td>
+                    <td>D</td>
+                </tr>
+                <tr class="t-5">
+                    <td> > 100</td>
+                    <td>Unsuitable for drinking</td>
+                    <td>E</td>
+                </tr>
+            </tbody>
+        </table>
+    </div> -->
+    <div class="container d-flex flex-column align-items-center chart" style="height: 650px;">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Location-wise Water Quality Index(WQI)</h3>
+        </div>
+        <Canvas id="barChart" style="background-color: white;"></Canvas>
+    </div>
+    <!-- <div class="container d-flex flex-column align-items-center" style="height: 650px;">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Health Risk Assessment(Nitrate and Flouride)</h3>
+        </div>
+        <table class="table text-center text-wrap bg-light">
+            <thead>
+                <tr class="t-h">
+                    <th scope="col">Sl No.</th>
+                    <th scope="col">Location Name</th>
+                    <th scope="col">Human</th>
+                    <th scope="col">Hazard Index(HI)</th>
+                    <th scope="col">Health Risk</th>
+                </tr>
+            </thead>
+            <tbody id="hazard"></tbody>
+        </table>
+    </div> -->
+</main>
+
+<!-- scripts -->
+<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+    integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
+    crossorigin=""></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+    integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+    // var json = JSON.parse(localStorage.getItem('json'));
+    const data = JSON.parse('<%- data %>');
+    let urls = [];
+    
+    window.addEventListener('load', () => {
+        const select_year = document.getElementById('select_year');
+        for (var key in data) {
+            url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + data[key].latitude + "&lon=" + data[key].longitude + "";
+            urls.push(url);
+        }
+        for (var key in data) {
+            const option = document.createElement('option');
+            option.value = data[key]["date"].split("-")[0];
+            option.textContent = data[key]["date"].split("-")[0];
+            select_year.appendChild(option);
+        }
+        function getAddress(url) {
+            return fetch(url)
+                .then(res => {
+                    return res.json();
+                })
+                .then(data => {
+                    return data.display_name;
+                })
+        }
+
+        Promise.all(
+            urls.map(getAddress)
+        ).then((address) => {
+            for (var i = 0; i < address.length; i++) {
+                document.getElementById(`address${i}`).innerHTML = address[i];
+                let add = address[i].split(", ");
+                barLabel.push(add[0]);
+            }
+            setTimeout(() => {
+                //Bar Chart
+                var canvas = document.getElementById("barChart");
+                var config = {
+                    type: "bar",
+                    data: {
+                        labels: barLabel,
+                        datasets: [{
+                            label: 'Water Quality Index',
+                            data: barData,
+                            backgroundColor: barbgColor,
+                            borderColor: barborderColor,
+                            border: 1,
+                            maxBarThickness: 14
+                        }
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Address' } },
+                            y: { title: { display: true, text: 'Water Quality Index' } }
+                        }
+                    }
+                }
+                var barChart = new Chart(canvas, config);
+            }, 1000);
+        })
+    });
+    // function show_data() {
+    //     const select_year = document.getElementById('select_year');
+    //     if (select_year.value === 'all_data') {
+    //         for (var key in data) {
+    //             let html = '';
+    //             let temp = [];
+    //             for (var item in data[key]) {
+    //                 if (item === 'ph') {
+    //                     temp = 'pH';
+    //                     html += "<span>" + temp + " : " + data[key][item] + "</span><br>";
+    //                 }
+    //                 else {
+    //                     if (item === 'latitude' | item === 'longitude') {
+    //                         temp = item.charAt(0).toUpperCase() + item.slice(1);
+    //                         html += "<span>" + temp + " : " + parseFloat(data[key][item]).toFixed(4) +
+    //                             "</span><br>";
+    //                     }
+    //                     else if (item === 'temperature' | item === 'turbidity' | item === 'hardness' |
+    //                         item === 'alkalinity' | item === 'ammonium' | item === 'nitrate' |
+    //                         item === 'nitrite' | item === 'phosphate' | item === 'flouride' |
+    //                         item === 'date') {
+    //                         temp = item.charAt(0).toUpperCase() + item.slice(1);
+    //                         html += "<span>" + temp + " : " + data[key][item] + "</span><br>";
+    //                     }
+    //                     else {
+    //                         temp = item.split("_");
+    //                         let temp1 = '';
+    //                         for (var i = 0; i < temp.length; i++) {
+    //                             temp1 = temp1 + temp[i].charAt(0).toUpperCase();
+    //                         }
+    //                         html += "<span>" + temp1 + " : " + data[key][item] + "</span><br>";
+    //                     }
+    //                 }
+    //             }
+
+    //             if (data[key].water_quality_index >= 0 && data[key].water_quality_index <= 25) {
+    //                 L.marker([data[key].latitude, data[key].longitude], { icon: darkGreenIcon })
+    //                     .addTo(map)
+    //                     .bindTooltip(html)
+    //                     .openTooltip();
+    //             }
+    //             else if (data[key].water_quality_index > 25 && data[key].water_quality_index <= 50) {
+    //                 L.marker([data[key].latitude, data[key].longitude], { icon: lightGreenIcon })
+    //                     .addTo(map)
+    //                     .bindTooltip(html)
+    //                     .openTooltip();
+    //             }
+    //             else if (data[key].water_quality_index > 50 && data[key].water_quality_index <= 75) {
+    //                 L.marker([data[key].latitude, data[key].longitude], { icon: yellowIcon })
+    //                     .addTo(map)
+    //                     .bindTooltip(html)
+    //                     .openTooltip();
+    //             }
+    //             else if (data[key].water_quality_index > 75 && data[key].water_quality_index <= 100) {
+    //                 L.marker([data[key].latitude, data[key].longitude], { icon: orangeIcon })
+    //                     .addTo(map)
+    //                     .bindTooltip(html)
+    //                     .openTooltip();
+    //             }
+    //             else if (data[key].water_quality_index > 100) {
+    //                 L.marker([data[key].latitude, data[key].longitude], { icon: redIcon })
+    //                     .addTo(map)
+    //                     .bindTooltip(html)
+    //                     .openTooltip();
+    //             }
+    //         }
+    //     }
+    //     else {
+    //         for (var i = 0; i < select_year.options.length; i++) {
+    //             let year_data = {};
+    //             let not_year_data = {};
+    //             if (select_year.options[i].value === select_year.value) {
+    //                 for (var item in data) {
+    //                     if (data[item]['date'].split('-')[0] === select_year.value) {
+    //                         data1[item] = data[item];
+    //                     }
+    //                 }
+
+    //                 for (var key in data1) {
+    //                     let html = '';
+    //                     let temp = [];
+    //                     for (var item in data1[key]) {
+    //                         if (item === 'ph') {
+    //                             temp = 'pH';
+    //                             html += "<span>" + temp + " : " + data1[key][item] + "</span><br>";
+    //                         }
+    //                         else {
+    //                             if (item === 'latitude' | item === 'longitude') {
+    //                                 temp = item.charAt(0).toUpperCase() + item.slice(1);
+    //                                 html += "<span>" + temp + " : " + parseFloat(data1[key][item]).toFixed(4) +
+    //                                     "</span><br>";
+    //                             }
+    //                             else if (item === 'temperature' | item === 'turbidity' | item === 'hardness' |
+    //                                 item === 'alkalinity' | item === 'ammonium' | item === 'nitrate' |
+    //                                 item === 'nitrite' | item === 'phosphate' | item === 'flouride' |
+    //                                 item === 'date') {
+    //                                 temp = item.charAt(0).toUpperCase() + item.slice(1);
+    //                                 html += "<span>" + temp + " : " + data1[key][item] + "</span><br>";
+    //                             }
+    //                             else {
+    //                                 temp = item.split("_");
+    //                                 let temp1 = '';
+    //                                 for (var i = 0; i < temp.length; i++) {
+    //                                     temp1 = temp1 + temp[i].charAt(0).toUpperCase();
+    //                                 }
+    //                                 html += "<span>" + temp1 + " : " + data1[key][item] + "</span><br>";
+    //                             }
+    //                         }
+    //                     }
+
+    //                     if (data1[key].water_quality_index >= 0 && data1[key].water_quality_index <= 25) {
+    //                         L.marker([data1[key].latitude, data1[key].longitude], { icon: darkGreenIcon })
+    //                             .addTo(map)
+    //                             .bindTooltip(html)
+    //                             .openTooltip();
+    //                     }
+    //                     else if (data1[key].water_quality_index > 25 && data1[key].water_quality_index <= 50) {
+    //                         L.marker([data1[key].latitude, data1[key].longitude], { icon: lightGreenIcon })
+    //                             .addTo(map)
+    //                             .bindTooltip(html)
+    //                             .openTooltip();
+    //                     }
+    //                     else if (data1[key].water_quality_index > 50 && data1[key].water_quality_index <= 75) {
+    //                         L.marker([data1[key].latitude, data1[key].longitude], { icon: yellowIcon })
+    //                             .addTo(map)
+    //                             .bindTooltip(html)
+    //                             .openTooltip();
+    //                     }
+    //                     else if (data1[key].water_quality_index > 75 && data1[key].water_quality_index <= 100) {
+    //                         L.marker([data1[key].latitude, data1[key].longitude], { icon: orangeIcon })
+    //                             .addTo(map)
+    //                             .bindTooltip(html)
+    //                             .openTooltip();
+    //                     }
+    //                     else if (data1[key].water_quality_index > 100) {
+    //                         L.marker([data1[key].latitude, data1[key].longitude], { icon: redIcon })
+    //                             .addTo(map)
+    //                             .bindTooltip(html)
+    //                             .openTooltip();
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }        
+    // }
+    var barLabel = [];
+    var barData = [];
+    var barbgColor = [];
+    var barborderColor = [];
+
+    //map
+    var map = L.map('siteMap').setView([24.3243, 85.5216], 5);
+    var redIcon = L.icon({
+        iconUrl: '/img/red_dot.png',
+        iconSize: [100, 100],
+    });
+    var darkGreenIcon = L.icon({
+        iconUrl: '/img/darkGreen_dot.png',
+        iconSize: [100, 100],
+    });
+    var lightGreenIcon = L.icon({
+        iconUrl: '/img/lightGreen_dot.png',
+        iconSize: [100, 100],
+    });
+    var yellowIcon = L.icon({
+        iconUrl: '/img/yellow_dot.png',
+        iconSize: [100, 100],
+    });
+    var orangeIcon = L.icon({
+        iconUrl: '/img/orange_dot.png',
+        iconSize: [100, 100],
+    });
+    const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tiles = L.tileLayer(tileUrl, { attribution });
+    tiles.addTo(map);
+    var legend = L.control({
+        position: "bottomleft"
+    });
+
+    //legend
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create("div", "legend");
+        div.innerHTML += '<h4>Water Quality Index(WQI)</h4>';
+        div.innerHTML += '<i style="background: var(--bs-green)"></i><span>Excellent (0-25)</span><br>';
+        div.innerHTML += '<i style="background: #16c172"></i><span>Good (26-50)</span><br>';
+        div.innerHTML += '<i style="background: var(--bs-yellow)"></i><span>Poor (51-75)</span><br>';
+        div.innerHTML += '<i style="background: var(--bs-orange)"></i><span>Very Poor (76-100)</span><br>';
+        div.innerHTML += '<i style="background: var(--bs-danger)"></i><span>Unsuitable for drinking (> 100)</span><br>';
+        return div;
+    }
+    legend.addTo(map);
+
+    //markers with tooltip
+    for (var key in data) {
+            let html = '';
+            let temp = [];
+            for (var item in data[key]) {
+                if (item === 'ph') {
+                    temp = 'pH';
+                    html += "<span>" + temp + " : " + data[key][item] + "</span><br>";
+                }
+                else {
+                    if (item === 'latitude' | item === 'longitude') {
+                        temp = item.charAt(0).toUpperCase() + item.slice(1);
+                        html += "<span>" + temp + " : " + parseFloat(data[key][item]).toFixed(4) +
+                            "</span><br>";
+                    }
+                    else if (item === 'temperature' | item === 'turbidity' | item === 'hardness' |
+                        item === 'alkalinity' | item === 'ammonium' | item === 'nitrate' |
+                        item === 'nitrite' | item === 'phosphate' | item === 'flouride' |
+                        item === 'date') {
+                        let unit = '';
+                        if (item === 'temperature') {
+                            unit = '&deg;C';
+                        }
+                        else if (item === 'turbidity') {
+                            unit = 'NTU';
+                        }
+                        else if (item === 'date') {
+                            unit = '';
+                        }
+                        else {
+                            unit = 'mg/l';
+                        }
+                        temp = item.charAt(0).toUpperCase() + item.slice(1);
+                        html += "<span>" + temp + " : " + data[key][item] + " " + unit +"</span><br>";
+                    }
+                    else {
+                        let unit = '';
+                        if (item === 'electrical_conductivity') {
+                            unit = 'S/m';
+                        }
+                        else {
+                            unit = 'mg/l';
+                        }
+                        temp = item.split("_");
+                        let temp1 = '';
+                        for (var i = 0; i < temp.length; i++) {
+                            temp1 = temp1 + temp[i].charAt(0).toUpperCase();
+                        }
+                        html += "<span>" + temp1 + " : " + data[key][item] + " "+ unit +"</span><br>";
+                    }
+                }
+            }
+
+            if (data[key].water_quality_index >= 0 && data[key].water_quality_index <= 25) {
+                L.marker([data[key].latitude, data[key].longitude], { icon: darkGreenIcon })
+                    .addTo(map)
+                    .bindTooltip(html)
+                    .closeTooltip();
+            }
+            else if (data[key].water_quality_index > 25 && data[key].water_quality_index <= 50) {
+                L.marker([data[key].latitude, data[key].longitude], { icon: lightGreenIcon })
+                    .addTo(map)
+                    .bindTooltip(html)
+                    .closeTooltip();
+            }
+            else if (data[key].water_quality_index > 50 && data[key].water_quality_index <= 75) {
+                L.marker([data[key].latitude, data[key].longitude], { icon: yellowIcon })
+                    .addTo(map)
+                    .bindTooltip(html)
+                    .closeTooltip();
+            }
+            else if (data[key].water_quality_index > 75 && data[key].water_quality_index <= 100) {
+                L.marker([data[key].latitude, data[key].longitude], { icon: orangeIcon })
+                    .addTo(map)
+                    .bindTooltip(html)
+                    .closeTooltip();
+            }
+            else if (data[key].water_quality_index > 100) {
+                L.marker([data[key].latitude, data[key].longitude], { icon: redIcon })
+                    .addTo(map)
+                    .bindTooltip(html)
+                    .closeTooltip();
+            }
+        }
+
+    var tbody = document.getElementById("tbody");
+    var bg_color = 'bg-white';
+    var i = 0;
+    for (var key in data) {
+        barData.push(data[key].water_quality_index);
+
+        if (data[key].water_quality_index >= 0 && data[key].water_quality_index <= 25) {
+            var wqi_class = 'Excellent';
+            bg_color = 't-1';
+            barbgColor.push("rgba(25, 135, 84, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (data[key].water_quality_index > 25 && data[key].water_quality_index <= 50) {
+            var wqi_class = 'Good';
+            bg_color = 't-2';
+            barbgColor.push("rgba(22, 193, 114, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (data[key].water_quality_index > 50 && data[key].water_quality_index <= 75) {
+            var wqi_class = 'Poor';
+            bg_color = 't-3';
+            barbgColor.push("rgba(255, 193, 7, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (data[key].water_quality_index > 75 && data[key].water_quality_index <= 100) {
+            var wqi_class = 'Very Poor';
+            bg_color = 't-4';
+            barbgColor.push("rgba(253, 126, 20, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (data[key].water_quality_index > 100) {
+            var wqi_class = 'Unsuitable for drinking';
+            bg_color = 't-5';
+            barbgColor.push("rgba(220, 53, 69, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        html = '<tr class=' + bg_color + '>\
+                            <td>'+ (i + 1) + '</td>\
+                            <td id="address'+ i +'"></td>\
+                            <td>'+ parseFloat(data[key].latitude).toFixed(4) + '</td>\
+                            <td>'+ parseFloat(data[key].longitude).toFixed(4) + '</td>\
+                            <td>'+ data[key].water_quality_index + '</td>\
+                            <td>'+ wqi_class + '</td>\
+                        </tr>';
+        tbody.innerHTML += html;
+        i++;
+    }
+
+    // var hazard_tbody = document.getElementById("hazard");
+    // var bg_color_child, bg_color_male, bg_color_female;
+    // for (var i = 0; i < json.hazard.length; i++) {
+
+    //     if (json.hazard[i].male < 1) {
+    //         health_risk_male = "No Risk";
+    //         bg_color_male = "t-1";
+    //     } else {
+    //         health_risk_male = "High Risk";
+    //         bg_color_male = "t-5";
+    //     }
+
+    //     if (json.hazard[i].female < 1) {
+    //         health_risk_female = "No Risk";
+    //         bg_color_female = "t-1";
+    //     } else {
+    //         health_risk_female = "High Risk";
+    //         bg_color_female = "t-1";
+    //     }
+
+    //     if (json.hazard[i].child < 1) {
+    //         health_risk_child = "No Risk";
+    //         bg_color_child = 't-1';
+    //     } else {
+    //         health_risk_child = "High Risk";
+    //         bg_color_child = 't-5';
+    //     }
+    //     html = '<tr class=' + bg_color_male + '>\
+    //                         <td rowspan="3">'+ (i + 1) + '</td>\
+    //                         <td rowspan="3">'+ json.data[i].address + '</td>\
+    //                         <td>Males</td>\
+    //                         <td>'+ json.hazard[i].male + '</td>\
+    //                         <td>'+ health_risk_male + '</td>\
+    //                     </tr>\
+    //                     <tr class='+ bg_color_female + '>\
+    //                         <td>Females</td>\
+    //                         <td>'+ json.hazard[i].female + '</td>\
+    //                         <td>'+ health_risk_female + '</td>\
+    //                     </tr>\
+    //                     <tr class='+ bg_color_child + '>\
+    //                         <td>Children</td>\
+    //                         <td>'+ json.hazard[i].child + '</td>\
+    //                         <td>'+ health_risk_child + '</td>\
+    //                     </tr>';
+    //     hazard_tbody.innerHTML += html;
+    // }
+
+</script>
