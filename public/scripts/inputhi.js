@@ -112,15 +112,6 @@ function add_form(latitude, longitude, counter) {
                     <div class="d-flex justify-content-between mt-3" id=parameter-'+ counter +'>\
                         <select class="form-select form-select-sm w-100" onchange="add_param('+ counter +')" id="select-'+ counter +'" aria-label=".form-select-sm example">\
                             <option selected disabled value="Select Parameter...">Select Parameter...</option>\
-                            <option value="ph">pH</option>\
-                            <option value="turbidity">Turbidity</option>\
-                            <option value="temperature">Temperature</option>\
-                            <option value="electrical_conductivity">Electrical Conductivity</option>\
-                            <option value="hardness">Hardness</option>\
-                            <option value="alkalinity">Alkalinity</option>\
-                            <option value="dissolved_oxygen">Dissolved Oxygen</option>\
-                            <option value="biological_oxygen_demand">Biological Oxygen Demand</option>\
-                            <option value="chemical_oxygen_demand">Chemical Oxygen Demand</option>\
                             <option value="ammonium">Ammonium</option>\
                             <option value="nitrate">Nitrate</option>\
                             <option value="nitrite">Nitrite</option>\
@@ -208,61 +199,8 @@ function add_param(count) {
         var div = document.createElement("DIV");
         div.setAttribute('class', "row mt-3");
         //values
-        if (select === 'ph') {
-            value = 8.6;
-            div.setAttribute('id', `ph${count}`);
-            attrib = "acid";
-            unit = '';
-        }
-        else if (select == 'turbidity') {
-            value = 3.68;
-            div.setAttribute('id', `turbidity${count}`);
-            attrib = 'turb';
-            unit = ' (in NTU)';
-        }
-        else if (select == 'temperature') {
-            value = 11.85;
-            div.setAttribute('id', `temperature${count}`);
-            attrib = 'temp';
-            unit = ' (in &deg;C)';
-        }
-        else if (select == 'electrical_conductivity') {
-            value = 447;
-            div.setAttribute('id', `electrical_conductivity${count}`);
-            attrib = 'ec';
-            unit = ' (in S/m)';
-        }
-        else if (select == "hardness") {
-            value = 94.19;
-            div.setAttribute('id', `hardness${count}`);
-            attrib = 'hard';
-            unit = ' (in mg/l)';
-        }
-        else if (select == "alkalinity") {
-            value = 28.92;
-            div.setAttribute('id', `alkalinity${count}`);
-            attrib = 'base';
-            unit = ' (in mg/l)';
-        }
-        else if (select == "dissolved_oxygen") {
-            value = 9.39;
-            div.setAttribute('id', `dissolved_oxygen${count}`);
-            attrib = 'o2';
-            unit = ' (in mg/l)';
-        }
-        else if (select == "biological_oxygen_demand") {
-            value = 5.89;
-            div.setAttribute('id', `biological_oxygen_demand${count}`);
-            attrib = 'bod';
-            unit = ' (in mg/l)';
-        }
-        else if (select == "chemical_oxygen_demand") {
-            value = 7.67;
-            div.setAttribute('id', `chemical_oxygen_demand${count}`);
-            attrib = 'cod';
-            unit = ' (in mg/l)';
-        }
-        else if (select == "ammonium") {
+        
+        if (select == "ammonium") {
             value = 0.085;
             div.setAttribute('id', `ammonium${count}`);
             attrib = 'nh4';

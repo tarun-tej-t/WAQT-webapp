@@ -19,10 +19,7 @@ const avg_exposure_time = {
     female: 10950,
     child: 4380
 };
-const ref_dosages = {
-    no3: 1.6,
-    f: 0.4
-};
+const ref_dosages = [1.6,0.1,0.4,0.2,0.8];
 
 function calculateHazardIndex(va) {
     let intake_oral = {};

@@ -1,0 +1,30 @@
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css' rel='stylesheet' />
+<link rel="stylesheet" href="/styles/inputs.style.css">
+<main>
+    <div class="container mb-1 text-center">
+        <h3 class="fw-bold p-2 text-white">Select the type of data you want to add</h3>
+    </div>
+   
+   
+    <div id="parentsparent">
+        <form id="indextype" action="" method="post">
+            <label for="Index">Select an Index:</label>
+            <select id="Index" name="index">
+             <option selected disabled>Select the index</option>
+             <option value="WQI">Water Quality Index</option>
+             <option value="HI">Hazard Index</option>
+            </select><br/>
+            <input type="submit">
+        <!-- </form> -->
+       
+    </div>
+</main>
+
+<script src="/scripts/input.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js'></script>
+<script>
+    document.getElementById('store').storeID.onchange = function() {
+    var newaction = this.value;
+    document.getElementById('store').action = newaction;
+};
+</script>

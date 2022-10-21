@@ -1,0 +1,25 @@
+<link href='https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.css' rel='stylesheet' />
+<link rel="stylesheet" href="/styles/inputs.style.css">
+<main>
+    <div class="container mb-1 text-center">
+        <h3 class="fw-bold p-2 text-white">Enter Health Risk Assessment Data</h3>
+    </div>
+    <div class="d-flex btns">        
+        <div class="d-flex justify-content-between">
+            <button type="button" class="bg-success add">
+                Click on the map to add location
+            </button>
+        </div>
+    </div>
+    <div class="container alert-message">
+        <%- include("./partials/input_message.ejs")%>
+    </div>
+    <div id="parentsparent">
+        <span id="map-popup" style="position: absolute;z-index: 1; color: #000; background-color: #fff; user-select: none;"></span>
+        <div id="map1"></div>
+        <form action="/outputhi" method="POST" id="parent" novalidate></form>
+    </div>
+</main>
+
+<script src="/scripts/inputhi.js"></script>
+<script src='https://api.mapbox.com/mapbox-gl-js/v2.8.2/mapbox-gl.js'></script>

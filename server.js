@@ -4,6 +4,7 @@ const User = require("./model/userData");
 const expresslayouts = require('express-ejs-layouts');
 const path = require('path');
 const calculate_wqi = require("./controller/wqi_formula");
+const calculate_hazard_index = require('./controller/hazardIndex_formula');
 const {google} = require('googleapis');
 const port = process.env.PORT || 3000;
 let userdata;
@@ -99,9 +100,48 @@ app.post("/input", (req, res) => {
             country,
             phone
         });
-        res.render("input");
+        res.render("input", {userdata : JSON.stringify(req.body)});
     }
 });
+
+app.post("/inputhi", (req, res) => {
+    userdata =  req.body;
+    // console.log(userdata.name);
+    const { name, email, country, phone } = req.body;
+    let errors = [];
+
+    if(!name || !email || !country) {
+        errors.push({msg: 'Please fill in all fields'});
+    }
+    else {
+        if (name.length < 4) {
+            errors.push({msg: 'Name should be at least 4 characters'});
+        }
+
+        if (!emailVarification(email)) {
+            errors.push({msg: 'Email is invalid'});
+        }
+    }
+
+    if (errors.length > 0) {
+        res.render('user', {
+            errors,
+            name,
+            email,
+            country,
+            phone
+        });
+    } else {
+        const newUser = new User({
+            name,
+            email,
+            country,
+            phone
+        });
+        res.render("inputhi", {userdata : JSON.stringify(req.body)});
+    }
+});
+
 
 app.post("/output", async (req, res) => {
     let err = [];
@@ -129,7 +169,11 @@ app.post("/output", async (req, res) => {
             obj[key]["latitude"] = lat;
             obj[key]["longitude"] = lng;
             obj[key]["date"] = date;
-            
+
+            //hazard index calculation
+            obj[key]["hazard_index"] = calculate_hazard_index([parseFloat(obj[key]["nitrate"]),parseFloat(obj[key]["nitrite"]),parseFloat(obj[key]["fluoride"]),parseFloat(obj[key]["ammonium"]),parseFloat(obj[key]["phosphate"])]);
+
+            const datee= Date(Date.now()).toString();
             //Google sheet as database
             const auth = new google.auth.GoogleAuth({
                 keyFile: "credentials.json",
@@ -142,11 +186,12 @@ app.post("/output", async (req, res) => {
             await googleSheets.spreadsheets.values.append({
                 auth,
                 spreadsheetId: spreadsheetsID,
-                range: 'Sheet1!A:U',
+                range: 'Sheet2!A:U',
                 valueInputOption: 'USER_ENTERED',
                 resource: {
                     values: [
-                        [   userdata.name, 
+                        [   Date(Date.now()).toString(),
+                            userdata.name, 
                             userdata.email, 
                             userdata.country, 
                             userdata.phone,
@@ -166,7 +211,11 @@ app.post("/output", async (req, res) => {
                             obj[key].nitrate,
                             obj[key].nitrite,
                             obj[key].phosphate,
-                            obj[key].water_quality_index
+                            obj[key].water_quality_index,
+                            obj[key].hazard_index.male,
+                            obj[key].hazard_index.female,
+                            obj[key].hazard_index.child,
+                            datee
                         ]
                     ]
                 }
@@ -175,6 +224,73 @@ app.post("/output", async (req, res) => {
         res.render("output", {data : JSON.stringify(obj)});
     }
 });
+
+app.post("/outputhi", async (req, res) => {
+    let err = [];
+    let obj = restructure(req.body);
+
+    //error handling
+    for (var key in obj) {
+        if (Object.keys(obj[key]).length < 4) {
+            err.push({msg: 'fill all the parameters'});
+        }
+    }
+    if (err.length > 0) {
+        res.render('inputhi', {
+            err
+        });
+    }
+    else {
+        
+        for (var key in obj) {
+            //water quality index calculation
+            let lat = obj[key]["latitude"];
+            let lng = obj[key]["longitude"];
+            let date = obj[key]["date"];
+         
+            obj[key]["hazard_index"] = calculate_hazard_index([parseFloat(obj[key]["nitrate"]),parseFloat(obj[key]["nitrite"]),parseFloat(obj[key]["fluoride"]),parseFloat(obj[key]["ammonium"]),parseFloat(obj[key]["phosphate"])]);
+            obj[key]["latitude"] = lat;
+            obj[key]["longitude"] = lng;
+            obj[key]["date"] = date;
+
+            
+            //Google sheet as database
+            const auth = new google.auth.GoogleAuth({
+                keyFile: "credentials.json",
+                scopes: "https://www.googleapis.com/auth/spreadsheets",
+            });
+            const client = await auth.getClient();
+            const googleSheets = google.sheets({version: 'v4', auth: client});
+            const spreadsheetsID = '1sAVZkd4xaaDIdiutBRzq51k3GGlcNUv_ZDfxq-JllW0';
+            
+            await googleSheets.spreadsheets.values.append({
+                auth,
+                spreadsheetId: spreadsheetsID,
+                range: 'Sheet3!A:U',
+                valueInputOption: 'USER_ENTERED',
+                resource: {
+                    values: [
+                        [   userdata.name, 
+                            userdata.email, 
+                            userdata.country, 
+                            userdata.phone,
+                            date,
+                            lat, 
+                            lng,
+                            obj[key].nitrate,
+                            obj[key].fluoride,
+                            obj[key].hazard_index.male,
+                            obj[key].hazard_index.female,
+                            obj[key].hazard_index.child
+                        ]
+                    ]
+                }
+            });            
+        }
+        res.render("outputhi", {data : JSON.stringify(obj)});
+    }
+});
+
 
 app.listen(port, () => {
     console.log(`Running at http://localhost:${port}`);

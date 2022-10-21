@@ -17,7 +17,7 @@ const vs = {
     nitrate: 5,
     nitrite: 1,
     phosphate: 0.65,
-    flouride: 1
+    fluoride: 1
 };
 
 const vi = {
@@ -34,7 +34,7 @@ const vi = {
     nitrate: 0,
     nitrite: 0,
     phosphate: 0,
-    flouride: 0
+    fluoride: 0
 };
 
 function calculate_wqi(va) {

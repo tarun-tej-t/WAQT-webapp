@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
     nitrate: Number,
     nitrite: Number,
     phosphate: Number,
+    fluoride: Number,
     water_quality_index: Number
 });
 
