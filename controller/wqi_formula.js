@@ -53,6 +53,9 @@ function calculate_wqi(va) {
     delete va["latitude"];
     delete va["longitude"];
     delete va["date"];
+    delete va["sodiumion"];
+    delete va["calciumion"];
+    delete va["magnesiumion"]
     
     for (let i in va) {
         if (isNaN(va[i])) {

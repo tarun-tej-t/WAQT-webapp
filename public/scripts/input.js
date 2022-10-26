@@ -126,6 +126,9 @@ function add_form(latitude, longitude, counter) {
                             <option value="nitrite">Nitrite</option>\
                             <option value="phosphate">Phosphate</option>\
                             <option value="fluoride">fluoride</option>\
+                            <option value="sodiumion">Na+</option>\
+                            <option value="calciumion">Ca+2</option>\
+                            <option value="magnesiumion">Mg+2</option>\
                         </select>\
                     </div>\
                 </li>\
@@ -291,7 +294,23 @@ function add_param(count) {
             div.setAttribute('id', `fluoride${count}`);
             attrib = 'f';
             unit = ' (in mg/l)';
-        }
+        }  
+        else if (select == "sodiumion") {
+            value = 0.1;
+            div.setAttribute('id', `sodiumion${count}`);
+            attrib = 'na';
+            unit = ' (in meq/l)';
+        }  else if (select == "calciumion") {
+            value = 0.1;
+            div.setAttribute('id', `calciumion${count}`);
+            attrib = 'ca';
+            unit = ' (in meq/l)';
+        }   else if (select == "magnesiumion") {
+            value = 0.1;
+            div.setAttribute('id', `magnesiumion${count}`);
+            attrib = 'mg';
+            unit = ' (in meq/l)';
+        }  
 
         if (select === 'ph') {
             html =  '<div class="d-flex flex-column">\
