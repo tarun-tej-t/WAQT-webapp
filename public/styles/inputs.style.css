@@ -156,7 +156,7 @@ input::placeholder {
 
 .dropdown-toggle {
     width: auto;
-    background-color: #fff;
+    background-color: rgb(255, 255, 255);
     color: #000;
 }
 
@@ -167,7 +167,8 @@ input::placeholder {
 
 .dropdown-menu {
     width: 40vw;
-    height: 220vh;
+    min-height: 50vh;
+    padding-bottom: 10vh;
 }
 
 .dropdown-menu>li {

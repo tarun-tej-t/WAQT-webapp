@@ -1,8 +1,9 @@
 <link rel="stylesheet" href="/styles/output.style.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css"
-    integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ=="
-    crossorigin="" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src='https://cdn.plot.ly/plotly-2.16.1.min.js'></script>
+    <script src="/scripts/wilcox.js"></script>
 
 <main class="overflow-auto">
     <div class="container text-center">
@@ -14,9 +15,9 @@
         </select>
     </div>
     <div class="container d-flex flex-column">
-        <div class="row w-100 text-center mt-3 text-white bg-primary align-self-center">
+        <!-- <div class="row w-100 text-center mt-3 text-white bg-primary align-self-center">
             <h3 class="wqi_header">Sample Location</h3>
-        </div>
+        </div> -->
         
         <div id="siteMap" style="height: 33rem;"></div>
     </div>
@@ -30,9 +31,7 @@
                     <th rowspan="2">Sl.no</th>
                     <th colspan="3" >Location</th>
                     <th rowspan="2" >WQI</th>
-                    <th rowspan="2" >Water Quality</th>  
-                    <th  rowspan="2">SAR</th> 
-                    <th  rowspan="2">Irrigation purpose</th> 
+                    <th rowspan="2" >Water Quality</th> 
                     <th rowspan="2">Human</th>
                     <th rowspan="2">Hazard Index(HI)</th>
                     <th  rowspan="2">Health Risk</th> 
@@ -48,7 +47,8 @@
             </thead>
             <tbody id="tbody"></tbody>
         </table>
-    </div>
+        
+        
 
     <!-- <div class="container d-flex flex-column align-items-center">
         <div class="row w-100 text-center mt-3 text-white bg-primary">
@@ -97,17 +97,96 @@
         </div>
         <Canvas id="barChart" style="background-color: white;"></Canvas>
     </div>
+    <hr/><hr/>
+    <h1 style="color: white;background-color: aqua;text-align: center;width: 1200px;">Irrigation Suitability</h1>
+    <table class="table text-center text-wrap table-1 w-100">
+        <thead>                
+            <tr class="t-h">
+                <th rowspan="2">Sl.no</th>
+                <th colspan="3" >Location</th> 
+                <th rowspan="2" >SAR</th> 
+                <th rowspan="2" >Irrigation suitability based on SAR</th>
+            </tr>
+            <tr class="t-h">
+                <th>Address</th>
+                <th>Latitude</th>
+                <th>Longitude</th>              
+            </tr>
+        </thead>
+        <tbody id="tbody1"></tbody>
+    </table> 
+    <div class="container d-flex flex-column align-items-center chart" style="height: 650px;">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Location-wise Sodium Absorption Rate</h3>
+        </div>
+        <Canvas id="barChart1" style="background-color: white;"></Canvas>
+    </div><hr/><hr/>
+
+    <table class="table text-center text-wrap table-1 w-100">
+        <thead>                
+            <tr class="t-h">
+                <th rowspan="2">Sl.no</th>
+                <th colspan="3" >Location</th>
+                <th  rowspan="2">Na%</th> 
+                <th  rowspan="2">Irrigation suitability based on Na%</th> 
+              
+               
+
+              
+            </tr>
+            <tr class="t-h">
+                <th>Address</th>
+                <th>Latitude</th>
+                <th>Longitude</th>              
+            </tr>
+        </thead>
+        <tbody id="tbody2"></tbody>
+    </table>
+    <div class="container d-flex flex-column align-items-center chart" style="height: 650px;">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Location-wise Sodium Percentage</h3>
+        </div>
+        <Canvas id="barChart2" style="background-color: white;"></Canvas>
+    </div><hr/><hr/>
+    <div><h1>Wilcox Diagram</h1></div>
+	<div id='myDiv' style="width:50vw"><!-- Plotly chart will be drawn inside this DIV --></div>
+</div>
    
 </main>
 
 <!-- scripts -->
-<script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
+<!-- <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js"
     integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ=="
-    crossorigin=""></script>
+    crossorigin=""></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
     integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
+    <script>
+        TESTER = document.getElementById('myDiv');
+        Plotly.newPlot(TESTER, [{
+            x: [0,200,1500, 3000, 4000],
+            y: [0,90, 80,40, 100],
+            type: 'scatter',
+            mode:'markers'
+          }], {
+            images: [
+                {
+                  "source": "https://raw.githubusercontent.com/tarun-tej-t/rutag-imgs/main/wilcox-empty.png",
+                  "xref": "x",
+                  "yref": "y",
+                  "x": -850,
+                  "y": 105,
+                  "sizex": 5400,
+                  "sizey": 125,
+                  "sizing": "stretch",
+                  "opacity": 0.9,
+                  "layer": "below"
+                }
+             
+              ]
+          })
+        
+        </script>
 <script>
     // var json = JSON.parse(localStorage.getItem('json'));
     const data = JSON.parse('<%- data %>');
@@ -140,6 +219,8 @@
         ).then((address) => {
             for (var i = 0; i < address.length; i++) {
                 document.getElementById(`address${i}`).innerHTML = address[i];
+                document.getElementById(`address1${i}`).innerHTML = address[i];
+                document.getElementById(`address2${i}`).innerHTML = address[i];
                 let add = address[i].split(", ");
                 barLabel.push(add[0]);
             }
@@ -168,6 +249,56 @@
                     }
                 }
                 var barChart = new Chart(canvas, config);
+
+
+                var canvas1 = document.getElementById("barChart1");
+                var config1 = {
+                    type: "bar",
+                    data: {
+                        labels: barLabel,
+                        datasets: [{
+                            label: 'Sodium Absorption Rate',
+                            data: barData1,
+                            backgroundColor: barbgColor,
+                            borderColor: barborderColor,
+                            border: 1,
+                            maxBarThickness: 14
+                        }
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Address' } },
+                            y: { title: { display: true, text: 'Sodium Absorption Rate' } }
+                        }
+                    }
+                }
+                var barChart1 = new Chart(canvas1, config1);
+
+
+                var canvas2 = document.getElementById("barChart2");
+                var config2 = {
+                    type: "bar",
+                    data: {
+                        labels: barLabel,
+                        datasets: [{
+                            label: 'Sodium percentage',
+                            data: barData2,
+                            backgroundColor: barbgColor,
+                            borderColor: barborderColor,
+                            border: 1,
+                            maxBarThickness: 14
+                        }
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Address' } },
+                            y: { title: { display: true, text: 'Sodium percentage(%)' } }
+                        }
+                    }
+                }
+                var barChart2 = new Chart(canvas2, config2);
             }, 1000);
         })
     });
@@ -179,6 +310,14 @@
     var barData = [];
     var barbgColor = [];
     var barborderColor = [];
+
+    var barData1 = [];
+    var barbgColor1 = [];
+    var barborderColor1 = [];
+
+    var barData2 = [];
+    var barbgColor2 = [];
+    var barborderColor2 = [];
 
     //map
     var map = L.map('siteMap').setView([24.3243, 85.5216], 5);
@@ -213,7 +352,7 @@
     //legend
     legend.onAdd = function (map) {
         var div = L.DomUtil.create("div", "legend");
-        div.innerHTML += '<h4>Water Quality Index(WQI)</h4>';
+        div.innerHTML += '<h4>Water Quality Status</h4>';
         div.innerHTML += '<i style="background: var(--bs-green)"></i><span>Excellent</span><br>';
         div.innerHTML += '<i style="background: #16c172"></i><span>Good</span><br>';
         div.innerHTML += '<i style="background: var(--bs-yellow)"></i><span>Poor</span><br>';
@@ -313,6 +452,8 @@
         }
 
     var tbody = document.getElementById("tbody");
+    var tbody1 = document.getElementById("tbody1");
+    var tbody2 = document.getElementById("tbody2");
     var bg_color = 'bg-white';
 
     //hazard index
@@ -321,6 +462,9 @@
     var i = 0;
     for (var key in data) {
         barData.push(data[key].water_quality_index);
+        barData1.push(data[key].sar);
+        barData2.push(data[key].Na_per);
+
 
         if (data[key].water_quality_index >= 0 && data[key].water_quality_index <= 25) {
             var wqi_class = 'Excellent';
@@ -379,18 +523,46 @@
     }
 
     //SAR
-    if(data[key].sar<10){
+    if(data[key].sar<20){
+        irrigation_purpose_Na = "Excellent";
+        barbgColor1.push("rgba(25, 135, 84, 0.8)");
+        barborderColor1.push("rgb(0, 0, 0)");
+    }
+    else if(data[key].sar<=40){
+        irrigation_purpose_Na = "Good";
+        barbgColor1.push("rgba(22, 193, 114, 0.8)");
+        barborderColor1.push("rgb(0, 0, 0)");
+    }
+    else if(data[key].sar<=60){
+        irrigation_purpose_Na = "Permissable";
+        barbgColor1.push("rgba(255, 193, 7, 0.8)");
+        barborderColor1.push("rgb(0, 0, 0)");
+    }
+    else if(data[key].sar<=80){
+        irrigation_purpose_Na = "Doubtful";
+        barbgColor1.push("rgba(253, 126, 20, 0.8)");
+        barborderColor1.push("rgb(0, 0, 0)");
+    }
+    else{
+        irrigation_purpose_Na = "Unsuitable";
+        barbgColor1.push("rgba(220, 53, 69, 0.8)");
+        barborderColor1.push("rgb(0, 0, 0)");
+    }
+
+       //Na%
+       if(data[key].Na_per<10){
         irrigation_purpose = "Excellent"
     }
-    else if(data[key].sar<=18){
+    else if(data[key].Na_per<=18){
         irrigation_purpose = "Good"
     }
-    else if(data[key].sar<=26){
+    else if(data[key].Na_per<=26){
         irrigation_purpose = "Doubtful"
     }
     else{
         irrigation_purpose = "Unsuitable"
     }
+
 
         html = '<tr class=' + bg_color + ' >\
                             <td rowspan="4">'+ (i + 1) + '</td>\
@@ -399,8 +571,6 @@
                             <td rowspan="4">'+ parseFloat(data[key].longitude).toFixed(4) + '</td>\
                             <td rowspan="4">'+ data[key].water_quality_index + '</td>\
                             <td rowspan="4">'+ wqi_class + '</td>\
-                            <td rowspan="4">'+ parseFloat(data[key].sar).toFixed(3) + '</td>\
-                            <td rowspan="4">'+ irrigation_purpose + '</td>\
                             <tr class=' +bg_color_male +'>\
                             <td>Males</td>\
                             <td>' +data[key].hazard_index.male +'</td>\
@@ -417,7 +587,26 @@
                             <td>' +health_risk_child +'</td>\
                            </tr>\
                         </tr>';
+        html1 = '<tr class=' + bg_color + ' >\
+                            <td >'+ (i + 1) + '</td>\
+                            <td  id="address1'+ i +'"></td>\
+                            <td >'+ parseFloat(data[key].latitude).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(data[key].longitude).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(data[key].sar).toFixed(3) + '</td>\
+                            <td >'+ irrigation_purpose + '</td>\
+                        </tr>';
+
+         html2 = '<tr class=' + bg_color + ' >\
+                            <td >'+ (i + 1) + '</td>\
+                            <td  id="address2'+ i +'"></td>\
+                            <td >'+ parseFloat(data[key].latitude).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(data[key].longitude).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(data[key].Na_per).toFixed(3) + '</td>\
+                            <td >'+ irrigation_purpose_Na + '</td>\
+                        </tr>';
         tbody.innerHTML +=html;
+        tbody1.innerHTML +=html1;
+        tbody2.innerHTML +=html2;
         i++;
     }
 

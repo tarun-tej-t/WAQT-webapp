@@ -55,7 +55,8 @@ function calculate_wqi(va) {
     delete va["date"];
     delete va["sodiumion"];
     delete va["calciumion"];
-    delete va["magnesiumion"]
+    delete va["magnesiumion"];
+    delete va["potassiumion"];
     
     for (let i in va) {
         if (isNaN(va[i])) {

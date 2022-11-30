@@ -8,7 +8,7 @@ window.addEventListener("load", () => {
         
     let map = new mapboxgl.Map({
             container: 'map1',
-            style: 'mapbox://styles/mapbox/streets-v11',
+            style: 'mapbox://styles/mapbox/satellite-streets-v11',
             center: [77.1025, 28.7041],
             zoom: 3
         });    
@@ -112,6 +112,18 @@ function add_form(latitude, longitude, counter) {
                     <div class="d-flex justify-content-between mt-3" id=parameter-'+ counter +'>\
                         <select class="form-select form-select-sm w-100" onchange="add_param('+ counter +')" id="select-'+ counter +'" aria-label=".form-select-sm example">\
                             <option selected disabled value="Select Parameter...">Select Parameter...</option>\
+                            <option  disabled value="Cations..." style="background-color:rgba(90, 3, 3, 0.621);color:white;font-weight:800;" >Cations...</option>\
+                            <option value="sodiumion">Na+</option>\
+                            <option value="calciumion">Ca+2</option>\
+                            <option value="magnesiumion">Mg+2</option>\
+                            <option value="potassiumion">K+</option>\
+                            <option  disabled value="Anions..." style="background-color:rgba(90, 3, 3, 0.621);color:white;font-weight:800;" >Anions...</option>\
+                            <option value="ammonium">Ammonium</option>\
+                            <option value="nitrate">Nitrate</option>\
+                            <option value="nitrite">Nitrite</option>\
+                            <option value="phosphate">Phosphate</option>\
+                            <option value="fluoride">fluoride</option>\
+                            <option  disabled value="others..." style="background-color:rgba(90, 3, 3, 0.621);color:white;font-weight:800;" >others...</option>\
                             <option value="ph">pH</option>\
                             <option value="turbidity">Turbidity</option>\
                             <option value="temperature">Temperature</option>\
@@ -121,14 +133,6 @@ function add_form(latitude, longitude, counter) {
                             <option value="dissolved_oxygen">Dissolved Oxygen</option>\
                             <option value="biological_oxygen_demand">Biological Oxygen Demand</option>\
                             <option value="chemical_oxygen_demand">Chemical Oxygen Demand</option>\
-                            <option value="ammonium">Ammonium</option>\
-                            <option value="nitrate">Nitrate</option>\
-                            <option value="nitrite">Nitrite</option>\
-                            <option value="phosphate">Phosphate</option>\
-                            <option value="fluoride">fluoride</option>\
-                            <option value="sodiumion">Na+</option>\
-                            <option value="calciumion">Ca+2</option>\
-                            <option value="magnesiumion">Mg+2</option>\
                         </select>\
                     </div>\
                 </li>\
@@ -199,7 +203,9 @@ function remove_form(count) {
     }
 }
 
+
 //Add parameter at top using Add Parameter Button
+
 function add_param(count) {
     var unit;
     var value;
@@ -311,6 +317,12 @@ function add_param(count) {
             attrib = 'mg';
             unit = ' (in meq/l)';
         }  
+        else if (select == "potassiumion") {
+            value = 0.1;
+            div.setAttribute('id', `potassiumion${count}`);
+            attrib = 'mg';
+            unit = ' (in meq/l)';
+        }  
 
         if (select === 'ph') {
             html =  '<div class="d-flex flex-column">\
@@ -335,7 +347,7 @@ function add_param(count) {
                         </div>\
                     </div>';
         }
-        // console.log(count);
+        console.log(count);
         div.innerHTML = html;
         li.appendChild(div);
         if (array[count].length === 0) {
@@ -353,6 +365,7 @@ function add_param(count) {
     console.log(array[count]);
     document.getElementById(`select-${count}`).value = 'Select Parameter...';
 }
+
 
 //Remove parameter
 function remove_parameter(param, count) {

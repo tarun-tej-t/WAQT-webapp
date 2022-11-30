@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="/scripts/piper.js"></script>
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+  <style>
+    .domain{
+      fill: none;
+    }
+    .shape{
+    	fill: skyblue
+    }
+    line{
+      stroke: #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="container"></div>
+  <div class="container1"></div>
+  <div class="container2"></div>
+  <div class="container3"></div>
+  <div class="container4"></div>
+  <py-repl id="my-repl" auto-generate="true"></py-repl>
+  <h1>Let's plot random numbers</h1>
+    <div id="plot"></div>
+    <py-config type="json">
+      {
+        "packages": ["numpy", "matplotlib","pandas","imageio"]
+        
+      }
+  </py-config>
+  <py-script output="plot">
+    import matplotlib.pyplot as plt
+    import numpy as np
+    x = np.random.randn(100)
+    y = np.random.randn(100)
+    fig, ax = plt.subplots()
+    ax.scatter(x, y)
+    fig
+  </py-script>
+  <py-script>
+    print('Hello, World!')
+   
+  </py-script>
+  <br><br><br>
+  <br><br></br>
+  
+  <!-- <script src="https://gist.github.com/biovisualize/114170dfc9e64438f73c.js"></script> -->
+
+
+  <script>
+    var config = {
+      container: document.querySelector('.container'),
+      width: 700,
+      height: 700,
+      margin: {top: 40, right: 40, bottom: 40, left: 40},
+      data: [1, 3, 4,5]
+    };
+    
+    var chart = piper.lineChart(config);
+
+
+    var config1 = {
+      container: document.querySelector('.container1'),
+      width: 700,
+      height: 700,
+      margin: {top: 100, right: 40, bottom: 40, left: 40},
+      data: [1, 3, 4,5]
+    };
+    
+    var chart1 = piper.sparkline(config1);
+
+
+    var config2 = {
+      container: document.querySelector('.container2'),
+      width: 700,
+      height: 700,
+      margin: {top: 200, right: 40, bottom: 40, left: 40},
+      data: [1, 3, 4,5]
+    };
+    
+    var chart2 = piper.barChart(config2);
+
+
+    var config3 = {
+      container: document.querySelector('.container3'),
+      width: 700,
+      height: 700,
+      margin: {top: 300, right: 40, bottom: 40, left: 40},
+      data: [1, 3, 4,5]
+    };
+    
+    var chart3 = piper.singleAxis(config3);
+
+    var config4 = {
+      container: document.querySelector('.container4'),
+      width: 700,
+      height: 700,
+      margin: {top: 500, right: 40, bottom: 40, left: 40},
+      data: [1, 3, 4,5]
+    };
+    
+    var chart4 = piper.trilinear(config4);
+  </script>
+
+</body>

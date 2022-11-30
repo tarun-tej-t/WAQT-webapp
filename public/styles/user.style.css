@@ -5,16 +5,20 @@
 }
 
 body {
-    background: url('/img/background.jpg') no-repeat fixed center;
-    height: 100vh;
+    background: url('/img/bg1.jpg') center ;
+    
+    background-size: cover;
+    
 }
 
 #submit {
     margin-top: 1em;
 }
 
-.container {
-    max-height: 100vh;
+
+.container-form {
+   background-color: rgba(240, 248, 255, 0.581);
+   background-size: 20vw;
 }
 
 .mt-n1 {
@@ -50,6 +54,7 @@ select {
 .form-group-xs {
     position: relative !important;
     margin-bottom: 30px !important;
+    width: 100vw;
     /* background-color: coral !important; */
 }
 
@@ -64,7 +69,7 @@ select {
     top: 0px !important;
     left: 90px !important;
     padding: 7px !important;
-    width: 90% !important;
+    width: 150% !important;
     font-size: 14px !important;
 }
 
@@ -73,7 +78,7 @@ select {
     top: 0px !important;
     left: 90px !important;
     padding: 7px !important;
-    width: 90% !important;
+    width: 150% !important;
     height: 37px !important;
     font-size: 14px !important;
     background-color: rgb(245, 245, 245) !important;
@@ -84,7 +89,7 @@ select {
 .form-group-xs small {
     position: absolute !important;
     top: 40px !important;
-    left: 80px !important;
+    left: 10px !important;
     color: #e74c3c !important;
     visibility: hidden !important;
 }
@@ -193,7 +198,7 @@ input::placeholder {
 form {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: left;
 }
 
 form > div {

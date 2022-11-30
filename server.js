@@ -7,6 +7,9 @@ const calculate_wqi = require("./controller/wqi_formula");
 const calculate_hazard_index = require("./controller/hazardIndex_formula");
 const calculate_sar = require("./controller/sar");
 const { google } = require("googleapis");
+const calculate_sodiumpercentage = require("./controller/sodiumpercentage");
+
+
 const port = process.env.PORT || 3000;
 let userdata;
 
@@ -67,6 +70,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //routes
 app.get("/", (req, res) => res.render("user"));
+app.get("/piper", (req, res) => res.render("piper"));
+app.get("/wilcox", (req, res) => res.render("wilcox"));
 
 app.post("/input", (req, res) => {
   userdata = req.body;
@@ -165,6 +170,14 @@ app.post("/output", async (req, res) => {
         parseFloat(obj[key]["magnesiumion"]),
       ]);
 
+      //sodium percentage calculation
+      obj[key]["Na_per"] = calculate_sodiumpercentage([
+        parseFloat(obj[key]["sodiumion"]),
+        parseFloat(obj[key]["calciumion"]),
+        parseFloat(obj[key]["magnesiumion"]),
+        parseFloat(obj[key]["potassiumion"]),
+      ]);
+
       //water quality index calculation
       let lat = obj[key]["latitude"];
       let lng = obj[key]["longitude"];
@@ -230,6 +243,7 @@ app.post("/output", async (req, res) => {
               obj[key].hazard_index.female,
               obj[key].hazard_index.child,
               obj[key].sar,
+              obj[key].Na_per
             ],
           ],
         },
