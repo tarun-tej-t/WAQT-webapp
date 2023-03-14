@@ -111,7 +111,15 @@ function add_form(latitude, longitude, counter) {
                 <li>\
                     <div class="d-flex justify-content-between mt-3" id=parameter-'+ counter +'>\
                         <select class="form-select form-select-sm w-100" onchange="add_param('+ counter +')" id="select-'+ counter +'" aria-label=".form-select-sm example">\
-                            <option selected disabled value="Select Parameter...">Select Parameter...</option>\
+                            <option selected disabled value="Select Parameter...">Select Parameter...</option>\     <option value="ph">pH</option>\
+                            <option value="turbidity">Turbidity</option>\
+                            <option value="temperature">Temperature</option>\
+                            <option value="electrical_conductivity">Electrical Conductivity</option>\
+                            <option value="hardness">Hardness</option>\
+                            <option value="alkalinity">Alkalinity</option>\
+                            <option value="dissolved_oxygen">Dissolved Oxygen</option>\
+                            <option value="biological_oxygen_demand">Biological Oxygen Demand</option>\
+                            <option value="chemical_oxygen_demand">Chemical Oxygen Demand</option>\
                             <option  disabled value="Cations..." style="background-color:rgba(90, 3, 3, 0.621);color:white;font-weight:800;" >Cations...</option>\
                             <option value="sodiumion">Na+</option>\
                             <option value="calciumion">Ca+2</option>\
@@ -123,16 +131,6 @@ function add_form(latitude, longitude, counter) {
                             <option value="nitrite">Nitrite</option>\
                             <option value="phosphate">Phosphate</option>\
                             <option value="fluoride">fluoride</option>\
-                            <option  disabled value="others..." style="background-color:rgba(90, 3, 3, 0.621);color:white;font-weight:800;" >others...</option>\
-                            <option value="ph">pH</option>\
-                            <option value="turbidity">Turbidity</option>\
-                            <option value="temperature">Temperature</option>\
-                            <option value="electrical_conductivity">Electrical Conductivity</option>\
-                            <option value="hardness">Hardness</option>\
-                            <option value="alkalinity">Alkalinity</option>\
-                            <option value="dissolved_oxygen">Dissolved Oxygen</option>\
-                            <option value="biological_oxygen_demand">Biological Oxygen Demand</option>\
-                            <option value="chemical_oxygen_demand">Chemical Oxygen Demand</option>\
                         </select>\
                     </div>\
                 </li>\

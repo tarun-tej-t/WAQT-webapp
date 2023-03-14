@@ -69,7 +69,8 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
 //routes
-app.get("/", (req, res) => res.render("user"));
+app.get("/", (req, res) => res.render("home"));
+app.get("/user", (req, res) => res.render("user"));
 app.get("/piper", (req, res) => res.render("piper"));
 app.get("/wilcox", (req, res) => res.render("wilcox"));
 

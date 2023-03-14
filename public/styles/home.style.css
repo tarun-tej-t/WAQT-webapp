@@ -1,0 +1,113 @@
+/* Global styles */
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #9ce0f2;
+
+  }
+
+  .navbar {
+    background-color: var(--bs-cyan) !important;
+}
+
+  
+  /* Header styles */
+  .hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 50px;
+    background-color: #0dcaf0;
+    color: #fff;
+  }
+  
+  .hero__title {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  .hero__description {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #fff;
+    color: #00d5ff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #00d5ff;
+    color: #fff;
+  }
+  
+  .hero__image {
+    width: 50%;
+  }
+  
+  .hero__img {
+    width: 100%;
+    height: auto;
+  }
+  
+  /* Point styles */
+  .point {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    padding: 50px;
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .point__title {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+  }
+  
+  .point__description {
+    font-size: 1.25rem;
+    margin-bottom: 30px;
+  }
+  
+  .point__image {
+    width: 100%;
+  }
+  
+  .point__img {
+    width: 100%;
+    height: auto;
+  }
+  
+  @media (max-width: 768px) {
+    .hero {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .hero__image {
+      width: 100%;
+      margin-top: 30px;
+    }
+    
+    .point {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .point__image {
+      width: 100%;
+      margin-top: 30px;
+    }
+  }
+  

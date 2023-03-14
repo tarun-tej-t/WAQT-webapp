@@ -10,6 +10,32 @@ body {
     height: 100vh;
 }
 
+
+
+
+
+
+#myDiv1 {
+    display: none; /* hide the div by default */
+  }
+  
+  #myCheckbox1:checked ~ #myDiv1 {
+    display: block; /* show the div when the checkbox is checked */
+  }
+  
+  #myDiv2 {
+    display: none; /* hide the div by default */
+  }
+  
+  #myCheckbox2:checked ~ #myDiv2 {
+    display: block; /* show the div when the checkbox is checked */
+  }
+  
+
+
+
+
+
 .container {
     max-height: 100vh !important;
 }
