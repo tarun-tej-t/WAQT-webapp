@@ -1,0 +1,10 @@
+<script>
+
+gapi.client.sheets.spreadsheets.values.get({
+    spreadsheetId: 'SPREADSHEET_ID',
+    range: 'SHEET_NAME!A1:B2',
+  }).then((response) => {
+    const values = response.result.values;
+    console.log('Data:', values);
+  });
+  </script>

@@ -1,0 +1,610 @@
+<link rel="stylesheet" href="/styles/output.style.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.16.1.min.js"></script>
+<script src="/scripts/wilcox.js"></script>
+
+<main class="overflow-auto">
+
+
+    <div class="container text-center">
+        <!-- <h1 id="addresscheck">ff</h1> -->
+        <h3 class="fw-bold pt-2 text-white">Water Quality Status</h3>
+    </div>
+    <div id="year" class="container">
+        <select name="year" id="select_year">
+            <option value="all_data" selected>All data</option>
+        </select>
+    </div>
+    <div class="container d-flex flex-column">
+        <div id="siteMap" style="height: 33rem"></div>
+    </div>
+
+    <div class="container d-flex flex-column align-items-center mt-3">
+        <!-- <input type="checkbox" id="myCheckbox1">
+        <label for="myCheckbox1">Water quality risk Assessment Table</label> -->
+
+        <div id="myDiv1" class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header"> Water Quality Risk Assessment</h3>
+        </div>
+    </div>
+        <table id="myDiv1" class="table text-center text-wrap table-1 w-100">
+            <thead>
+                <tr class="t-h">
+                    <th rowspan="2">Sl.no</th>
+                    <th colspan="3">Location</th>
+                    <th rowspan="2">WQI</th>
+                    <th rowspan="2">Water Quality</th>
+                    <th colspan="3">Health Risk Assessment</th>
+                </tr>
+
+                <tr class="t-h">
+
+                    <th>Address</th>
+                    <th>Latitude</th>
+                    <th>Longitude</th>
+                    <th>Males</th>
+                    <th>Females</th>
+                    <th>Children</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+
+    <div class="container d-flex flex-column align-items-center chart" style="height: 650px;">
+
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Location-wise Water Quality Status</h3>
+        </div>
+        <Canvas id="barChart" style="background-color: white;"></Canvas>
+    </div>
+
+    <h1 style="color: white;text-align: center;width: 1200px;">Irrigation Suitability</h1>
+    <table class="table text-center text-wrap table-1 w-100">
+        <thead>
+            <tr class="t-h">
+                <th rowspan="2">Sl.no</th>
+                <th colspan="3">Location</th>
+                <th rowspan="2">SAR</th>
+                <th rowspan="2">Irrigation suitability based on SAR</th>
+                <th rowspan="2">Na%</th>
+                <th rowspan="2">Irrigation suitability based on Na%</th>
+
+            </tr>
+            <tr class="t-h">
+                <th>Address</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+        </thead>
+        <tbody id="tbody1"></tbody>
+    </table>
+   
+    <div class="container d-flex flex-column align-items-center chart" style="height: 650px;">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Location-wise Sodium Absorption Rate</h3>
+        </div>
+        <Canvas id="barChart1" style="background-color: white;"></Canvas>
+    </div>
+   
+
+    <table class="table text-center text-wrap table-1 w-100" style="display:none">
+        <thead>
+            <tr class="t-h">
+                <th rowspan="2">Sl.no</th>
+                <th colspan="3">Location</th>
+                <th rowspan="2">Na%</th>
+                <th rowspan="2">Irrigation suitability based on Na%</th>
+            </tr>
+            <tr class="t-h">
+                <th>Address</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+        </thead>
+        <tbody id="tbody2"></tbody>
+    </table>
+  
+ 
+    <div class="container d-flex flex-column align-items-center chart" style="height: 650px;">
+        <div class="row w-100 text-center mt-3 text-white bg-primary">
+            <h3 class="wqi_header">Location-wise Sodium Percentage</h3>
+        </div>
+        <Canvas id="barChart2" style="background-color: white;"></Canvas>
+    </div>
+ 
+    <div>
+        <h1>Wilcox Diagram</h1>
+    </div>
+    <div id="myDiv" style="width: 50vw">
+        <!-- Plotly chart will be drawn inside this DIV -->
+    </div>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+    integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+//   setTimeout(function() {
+//   var element = document.getElementById("boddy");
+//   element.style.display = "block";
+// }, 000); // 3 seconds delay
+
+</script>
+
+<script>
+    const columns = {
+        date: JSON.parse('<%- JSON.stringify(rows.map(row => row[0])) %>'),
+        latitude: JSON.parse('<%- JSON.stringify(rows.map(row => row[1])) %>'),
+        longitude: JSON.parse('<%- JSON.stringify(rows.map(row => row[2])) %>'),
+        water_quality_index: JSON.parse('<%- JSON.stringify(rows.map(row => row[3])) %>'),
+        Na_per: JSON.parse('<%- JSON.stringify(rows.map(row => row[5])) %>'),
+        sar: JSON.parse('<%- JSON.stringify(rows.map(row => row[4])) %>'),
+        HImale: JSON.parse('<%- JSON.stringify(rows.map(row => row[6])) %>'),
+        HIfemale: JSON.parse('<%- JSON.stringify(rows.map(row => row[7])) %>'),
+        HIchild: JSON.parse('<%- JSON.stringify(rows.map(row => row[8])) %>'),
+
+
+        // ElecticalConductivity: JSON.parse('<%- JSON.stringify(rows.map(row => row[11])) %>'),
+
+        // ... other columns ...
+    };
+
+
+    //variables
+
+    startIndex = 0
+    totalrows = startIndex + 50
+    date = columns.date
+    latitude = columns.latitude
+    longitude = columns.longitude
+    water_quality_index = columns.water_quality_index
+    Na_per = columns.Na_per
+    sar = columns.sar
+    HImale = columns.HImale
+    HIfemale = columns.HIfemale
+    HIchild = columns.HIchild
+    addresses = [];
+    barLabel=[];
+
+    ElecticalConductivity = columns.ElecticalConductivity
+
+    //wilcox
+    TESTER = document.getElementById("myDiv");
+    Plotly.newPlot(
+        TESTER,
+        [
+            {
+                x: [0, 200, 1500, 3000, 4000],
+                y: [0, 90, 80, 40, 100],
+                // x: ElecticalConductivity,
+                // y: Na_per,
+                type: "scatter",
+                mode: "markers",
+            },
+        ],
+        {
+            images: [
+                {
+                    source:
+                        "https://raw.githubusercontent.com/tarun-tej-t/rutag-imgs/main/wilcox-empty.png",
+                    xref: "x",
+                    yref: "y",
+                    x: -850,
+                    y: 105,
+                    sizex: 5400,
+                    sizey: 125,
+                    sizing: "stretch",
+                    opacity: 0.9,
+                    layer: "below",
+                },
+            ],
+        }
+    );
+
+
+
+    let urls = [];
+
+    window.addEventListener("load", () => {
+        const select_year = document.getElementById("select_year");
+
+        function getAddress(latitude, longitude) {
+            const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyAphUM5rGegvT6IshrEA-fz5syBSDBaA4E`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.results[0].formatted_address;
+                    addresses.push(address);
+                    // const addressElement = document.getElementById("addresscheck");
+                    // addressElement.textContent = address
+                    return address;
+                })
+                .catch(error => console.log(error));
+        }
+
+
+
+        for (let i = startIndex; i < totalrows; i++) {
+            const option = document.createElement("option");
+            const year = date[i].split("-")[0]; // extract the year from the date
+            count = 0
+            for (let j = startIndex; j < i; j++) {
+                if (year == date[j].split("-")[0]) count++;
+            }
+            if (year > 1000 && count == 0) {
+                option.value = year;
+                option.textContent = year;
+                select_year.appendChild(option);
+            }
+
+            getAddress(latitude[i], longitude[i]);
+
+
+        }
+//    Bar Chart
+               
+
+  
+
+        // for (let i = 0; i < 5; i++) {
+        //     //   addresses1 = addresses.map((address) => address.split(":")[1]);
+
+        //     const intervalID = setInterval(() => {
+        //         console.log(addresses[i]);
+        //     }, 1000); // prints 'Hello, world!' every 1000ms (1 second)
+
+        //     // Stop the interval after 5 seconds (5000ms)
+        //     setTimeout(() => {
+        //         clearInterval(intervalID);
+        //     }, 2000);
+
+        // }
+
+        // Promise.all(
+        //     urls.map(getAddress)
+        // ).then((addresses) => {
+        //     for (var i = 0; i < totalrows; i++) {
+        //         // document.getElementById(`addresscheck`).innerHTML = address[i];
+        //         document.getElementById(`address1${i}`).innerHTML = address[i];
+        //         document.getElementById(`address2${i}`).innerHTML = address[i];
+        //         let add = addresses[i].split(", ");
+        //         barLabel.push(add[0]);
+        //     }
+        //     setTimeout(() => {
+        //      
+        //     }, 1000);
+        // })
+    });
+
+    setTimeout(function() {
+    
+       
+       
+    var barLabel=[].concat(addresses)
+    var barData = [];
+    var barbgColor = [];
+    var barborderColor = [];
+
+    var barData1 = [];
+    var barbgColor1 = [];
+    var barborderColor1 = [];
+
+    var barData2 = [];
+    var barbgColor2 = [];
+    var barborderColor2 = [];
+
+    //map
+    var map = L.map('siteMap').setView([24.3243, 85.5216], 5);
+    var redIcon = L.icon({
+        iconUrl: '/img/red_dot.png',
+        iconSize: [100, 100],
+    });
+    var darkGreenIcon = L.icon({
+        iconUrl: '/img/darkGreen_dot.png',
+        iconSize: [100, 100],
+    });
+    var lightGreenIcon = L.icon({
+        iconUrl: '/img/lightGreen_dot.png',
+        iconSize: [100, 100],
+    });
+    var yellowIcon = L.icon({
+        iconUrl: '/img/yellow_dot.png',
+        iconSize: [100, 100],
+    });
+    var orangeIcon = L.icon({
+        iconUrl: '/img/orange_dot.png',
+        iconSize: [100, 100],
+    });
+    const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tiles = L.tileLayer(tileUrl, { attribution });
+    tiles.addTo(map);
+    var legend = L.control({
+        position: "bottomleft"
+    });
+
+    //legend
+    legend.onAdd = function (map) {
+        var div = L.DomUtil.create("div", "legend");
+        div.innerHTML += '<h4>Water Quality Status</h4>';
+        div.innerHTML += '<i style="background: var(--bs-green)"></i><span>Excellent</span><br>';
+        div.innerHTML += '<i style="background: #16c172"></i><span>Good</span><br>';
+        div.innerHTML += '<i style="background: var(--bs-yellow)"></i><span>Poor</span><br>';
+        div.innerHTML += '<i style="background: var(--bs-orange)"></i><span>Very Poor</span><br>';
+        div.innerHTML += '<i style="background: var(--bs-danger)"></i><span>Unsuitable for drinking</span><br>';
+        return div;
+    }
+    legend.addTo(map);
+
+   
+    //markers with tooltip
+    for (let i = startIndex; i < totalrows; i++) {
+        let html = '';
+        let temp = [];
+       
+        let unit = '';
+        html += "<span>" + "address : " + addresses[i] + " " + unit + "</span><br>";
+        html += "<span>" + "Date : " + date[i] + " " + unit + "</span><br>";
+        html += "<span>" + "Water Qulity Index : " + water_quality_index[i] + " " + unit + "</span><br>";
+        html += "<span>" + "Hazard Index : male :" + HImale[i] + "; female :" + HIfemale[i] + "; child :" + HIchild[i] + "</span><br>";
+
+        if (water_quality_index[i] >= 0 && water_quality_index[i] <= 25) {
+            L.marker([latitude[i], longitude[i]], { icon: darkGreenIcon })
+                .addTo(map)
+                .bindTooltip(html)
+                .closeTooltip();
+        }
+        else if (water_quality_index[i] > 25 && water_quality_index[i] <= 50) {
+            L.marker([latitude[i], longitude[i]], { icon: lightGreenIcon })
+                .addTo(map)
+                .bindTooltip(html)
+                .closeTooltip();
+        }
+        else if (water_quality_index[i] > 50 && water_quality_index[i] <= 75) {
+            L.marker([latitude[i], longitude[i]], { icon: yellowIcon })
+                .addTo(map)
+                .bindTooltip(html)
+                .closeTooltip();
+        }
+        else if (water_quality_index[i] > 75 && water_quality_index[i] <= 100) {
+            L.marker([latitude[i], longitude[i]], { icon: orangeIcon })
+                .addTo(map)
+                .bindTooltip(html)
+                .closeTooltip();
+        }
+        else if (water_quality_index[i] > 100) {
+            L.marker([latitude[i], longitude[i]], { icon: redIcon })
+                .addTo(map)
+                .bindTooltip(html)
+                .closeTooltip();
+        }
+    }
+    
+    var tbody = document.getElementById("tbody");
+    var tbody1 = document.getElementById("tbody1");
+    var tbody2 = document.getElementById("tbody2");
+    var bg_color = 'bg-white';
+
+    //hazard index
+    var bg_color_child, bg_color_male, bg_color_female;
+
+    
+    for (let i = startIndex; i < totalrows; i++) {
+        barData.push(water_quality_index[i]);
+        barData1.push(sar[i]);
+        barData2.push(Na_per[i]);
+
+
+        if (water_quality_index[i] >= 0 && water_quality_index[i] <= 25) {
+            var wqi_class = 'Excellent';
+            bg_color = 't-1';
+            barbgColor.push("rgba(25, 135, 84, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (water_quality_index[i] > 25 && water_quality_index[i] <= 50) {
+            var wqi_class = 'Good';
+            bg_color = 't-2';
+            barbgColor.push("rgba(22, 193, 114, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (water_quality_index[i] > 50 && water_quality_index[i] <= 75) {
+            var wqi_class = 'Poor';
+            bg_color = 't-3';
+            barbgColor.push("rgba(255, 193, 7, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (water_quality_index[i] > 75 && water_quality_index[i] <= 100) {
+            var wqi_class = 'Very Poor';
+            bg_color = 't-4';
+            barbgColor.push("rgba(253, 126, 20, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+        else if (water_quality_index[i] > 100) {
+            var wqi_class = 'Unsuitable for drinking';
+            bg_color = 't-5';
+            barbgColor.push("rgba(220, 53, 69, 0.8)");
+            barborderColor.push("rgb(0, 0, 0)");
+        }
+
+        //Hazard index
+        if (HImale[i] < 1) {
+            health_risk_male = "No Risk";
+            bg_color_male = "t-1";
+        } else {
+            health_risk_male = "High Risk";
+            bg_color_male = "t-5";
+        }
+
+        if (HIfemale[i] < 1) {
+            health_risk_female = "No Risk";
+            bg_color_female = "t-1";
+        } else {
+            health_risk_female = "High Risk";
+            bg_color_female = "t-1";
+        }
+
+        if (HIchild[i] < 1) {
+            health_risk_child = "No Risk";
+            bg_color_child = "t-1";
+        } else {
+            health_risk_child = "High Risk";
+            bg_color_child = "t-5";
+        }
+
+        //SAR
+        if (sar[i] < 20) {
+            irrigation_purpose_Na = "Excellent";
+            barbgColor1.push("rgba(25, 135, 84, 0.8)");
+            barborderColor1.push("rgb(0, 0, 0)");
+        }
+        else if (sar[i] <= 40) {
+            irrigation_purpose_Na = "Good";
+            barbgColor1.push("rgba(22, 193, 114, 0.8)");
+            barborderColor1.push("rgb(0, 0, 0)");
+        }
+        else if (sar[i] <= 60) {
+            irrigation_purpose_Na = "Permissable";
+            barbgColor1.push("rgba(255, 193, 7, 0.8)");
+            barborderColor1.push("rgb(0, 0, 0)");
+        }
+        else if (sar[i] <= 80) {
+            irrigation_purpose_Na = "Doubtful";
+            barbgColor1.push("rgba(253, 126, 20, 0.8)");
+            barborderColor1.push("rgb(0, 0, 0)");
+        }
+        else {
+            irrigation_purpose_Na = "Unsuitable";
+            barbgColor1.push("rgba(220, 53, 69, 0.8)");
+            barborderColor1.push("rgb(0, 0, 0)");
+        }
+
+        //Na%
+        if (Na_per[i] < 10) {
+            irrigation_purpose = "Excellent"
+        }
+        else if (Na_per[i] <= 18) {
+            irrigation_purpose = "Good"
+        }
+        else if (Na_per[i] <= 26) {
+            irrigation_purpose = "Doubtful"
+        }
+        else {
+            irrigation_purpose = "Unsuitable"
+        }
+        
+
+
+        html = '<tr class=' + bg_color + ' >\
+                            <td>'+ (i + 1) + '</td>\
+                            <td >'+ addresses[i] + '</td>\
+                            <td >'+ parseFloat(latitude[i]).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(longitude[i]).toFixed(4) + '</td>\
+                            <td >'+ water_quality_index[i] + '</td>\
+                            <td >'+ wqi_class + '</td>\
+                            <td  class=' + bg_color_male + '>' + health_risk_male + ' (HI=' + HImale[i] + ')' + '</td>\
+                            <td class=' + bg_color_female + '>' + health_risk_female + ' (HI=' + HIfemale[i] + ')' + '</td>\
+                           <td  class=' + bg_color_child + '>' + health_risk_child + ' (HI=' + HIchild[i] + ')' + '</td>\
+                        </tr>';
+        html1 = '<tr class=' + bg_color + ' >\
+                            <td >'+ (i + 1) + '</td>\
+                            <td >'+ addresses[i] + '</td>\
+                            <td >'+ parseFloat(latitude[i]).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(longitude[i]).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(sar[i]).toFixed(3) + '</td>\
+                            <td >'+ irrigation_purpose + '</td>\
+                            <td >'+ parseFloat(Na_per[i]).toFixed(3) + '</td>\
+                            <td >'+ irrigation_purpose_Na + '</td>\
+                        </tr>';
+
+        html2 = '<tr class=' + bg_color + ' >\
+                            <td >'+ (i + 1) + '</td>\
+                            <td >'+ addresses[i] + '</td>\
+                            <td >'+ parseFloat(latitude[i]).toFixed(4) + '</td>\
+                            <td >'+ parseFloat(longitude[i]).toFixed(4) + '</td>\
+                        </tr>';
+        tbody.innerHTML += html;
+        tbody1.innerHTML += html1;
+        tbody2.innerHTML += html2;
+        setTimeout(function() {
+console.log(barData)
+console.log(barLabel)
+        var canvas = document.getElementById("barChart");
+                var config = {
+                    type: "bar",
+                    data: {
+                        labels: barLabel,
+                        datasets: [{
+                            label: 'Water Quality Index',
+                            data: barData,
+                            backgroundColor: barbgColor,
+                            borderColor: barborderColor,
+                            border: 1,
+                            maxBarThickness: 14
+                        }
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Address' } },
+                            y: { title: { display: true, text: 'Water Quality Index' } }
+                        }
+                    }
+                }
+                var barChart = new Chart(canvas, config);
+
+                var canvas1 = document.getElementById("barChart1");
+                var config1 = {
+                    type: "bar",
+                    data: {
+                        labels: barLabel,
+                        datasets: [{
+                            label: 'Sodium Absorption Rate',
+                            data: barData1,
+                            backgroundColor: barbgColor,
+                            borderColor: barborderColor,
+                            border: 1,
+                            maxBarThickness: 14
+                        }
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Address' } },
+                            y: { title: { display: true, text: 'Sodium Absorption Rate' } }
+                        }
+                    }
+                }
+                var barChart1 = new Chart(canvas1, config1);
+
+                var canvas2 = document.getElementById("barChart2");
+                var config2 = {
+                    type: "bar",
+                    data: {
+                        labels: barLabel,
+                        datasets: [{
+                            label: 'Sodium percentage',
+                            data: barData2,
+                            backgroundColor: barbgColor,
+                            borderColor: barborderColor,
+                            border: 1,
+                            maxBarThickness: 14
+                        }
+                        ],
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Address' } },
+                            y: { title: { display: true, text: 'Sodium percentage(%)' } }
+                        }
+                    }
+                }
+                var barChart2 = new Chart(canvas2, config2);
+            },2000);
+    }},2000);
+</script>

@@ -8,7 +8,7 @@ const calculate_hazard_index = require("./controller/hazardIndex_formula");
 const calculate_sar = require("./controller/sar");
 const { google } = require("googleapis");
 const calculate_sodiumpercentage = require("./controller/sodiumpercentage");
-
+const ejs = require('ejs');
 
 const port = process.env.PORT || 3000;
 let userdata;
@@ -49,13 +49,6 @@ function emailVarification(email) {
   );
 }
 
-//DB config
-// const db = require("./config/keys").mongoURI;
-
-//Connect to Mongo
-// mongoose.connect(db, { useNewUrlParser: true})
-//     .then(() => console.log('Mongodb connected...'))
-//     .catch(err => console.log(err));
 
 //EJS
 app.use(expresslayouts);
@@ -73,10 +66,11 @@ app.get("/", (req, res) => res.render("home"));
 app.get("/user", (req, res) => res.render("user"));
 app.get("/piper", (req, res) => res.render("piper"));
 app.get("/wilcox", (req, res) => res.render("wilcox"));
+app.get("/test", (req, res) => res.render("test"));
+
 
 app.post("/input", (req, res) => {
   userdata = req.body;
-  // console.log(userdata.name);
   const { name, email, country, phone } = req.body;
   let errors = [];
 
@@ -107,51 +101,51 @@ app.post("/input", (req, res) => {
       country,
       phone,
     });
+    console.log(req.body);
+    console.log(JSON.stringify(req.body))
     res.render("input", { userdata: JSON.stringify(req.body) });
   }
 });
 
-// app.post("/inputhi", (req, res) => {
-//   userdata = req.body;
-//   // console.log(userdata.name);
-//   const { name, email, country, phone } = req.body;
-//   let errors = [];
+// Define a route for the root path of the application
+app.get('/output1',async (req, res) => {
 
-//   if (!name || !email || !country) {
-//     errors.push({ msg: "Please fill in all fields" });
-//   } else {
-//     if (name.length < 4) {
-//       errors.push({ msg: "Name should be at least 4 characters" });
-//     }
+  //Google sheet as database
+  const auth = new google.auth.GoogleAuth({
+    keyFile: "credentials.json",
+    scopes: "https://www.googleapis.com/auth/spreadsheets",
+  });
+  const client =  auth.getClient();
+  const googleSheets = google.sheets({ version: "v4", auth: client });
+  const spreadsheetsID = "1sAVZkd4xaaDIdiutBRzq51k3GGlcNUv_ZDfxq-JllW0";
 
-//     if (!emailVarification(email)) {
-//       errors.push({ msg: "Email is invalid" });
-//     }
-//   }
+  const range = 'Sheet5!A:AD';
 
-//   if (errors.length > 0) {
-//     res.render("user", {
-//       errors,
-//       name,
-//       email,
-//       country,
-//       phone,
-//     });
-//   } else {
-//     const newUser = new User({
-//       name,
-//       email,
-//       country,
-//       phone,
-//     });
-//     res.render("inputhi", { userdata: JSON.stringify(req.body) });
-//   }
-// });
+  // Retrieve the last five rows of the Google Sheet
+  await googleSheets.spreadsheets.values.get({
+    auth,
+    spreadsheetId: spreadsheetsID,
+    range: range,
+   
+  }, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.send('Error retrieving data from Google Sheets');
+      return;
+    }
+
+    const rows = result.data.values;
+    // Render the rows using EJS and send the HTML as the response
+    res.render('output1', { rows });
+  });
+});
+
 
 app.post("/output", async (req, res) => {
   let err = [];
   let obj = restructure(req.body);
   let objwqi=restructure(req.body);
+  let rows;
   //error handling
   for (var key in obj) {
     if (Object.keys(obj[key]).length <= 6) {
@@ -206,7 +200,7 @@ app.post("/output", async (req, res) => {
       const client = await auth.getClient();
       const googleSheets = google.sheets({ version: "v4", auth: client });
       const spreadsheetsID = "1sAVZkd4xaaDIdiutBRzq51k3GGlcNUv_ZDfxq-JllW0";
-
+  
       await googleSheets.spreadsheets.values.append({
         auth,
         spreadsheetId: spreadsheetsID,
@@ -246,84 +240,39 @@ app.post("/output", async (req, res) => {
               obj[key].sar,
               obj[key].Na_per
             ],
+
           ],
         },
-      });
+      },(err, res) => {
+        if (err) return console.log(`The API returned an error: ${err}`);
+    });
+    const range = 'Sheet4!A:AD';
+
+  // Retrieve the last five rows of the Google Sheet
+  await googleSheets.spreadsheets.values.get({
+    auth,
+    spreadsheetId: spreadsheetsID,
+    range: range,
+   
+  }, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.send('Error retrieving data from Google Sheets');
+      return;
     }
-    res.render("output", { data: JSON.stringify(obj) });
+
+    const rows1 = result.data.values;
+    rows=rows1;
+    });
+   
+res.render("output", { rows,data: JSON.stringify(obj)});
+
   }
+}
 });
 
-// app.post("/outputhi", async (req, res) => {
-//   let err = [];
-//   let obj = restructure(req.body);
 
-//   //error handling
-//   for (var key in obj) {
-//     if (Object.keys(obj[key]).length < 4) {
-//       err.push({ msg: "fill all the parameters" });
-//     }
-//   }
-//   if (err.length > 0) {
-//     res.render("inputhi", {
-//       err,
-//     });
-//   } else {
-//     for (var key in obj) {
-//       //water quality index calculation
-//       let lat = obj[key]["latitude"];
-//       let lng = obj[key]["longitude"];
-//       let date = obj[key]["date"];
-
-//       obj[key]["hazard_index"] = calculate_hazard_index([
-//         parseFloat(obj[key]["nitrate"]),
-//         parseFloat(obj[key]["nitrite"]),
-//         parseFloat(obj[key]["fluoride"]),
-//         parseFloat(obj[key]["ammonium"]),
-//         parseFloat(obj[key]["phosphate"]),
-//       ]);
-//       obj[key]["latitude"] = lat;
-//       obj[key]["longitude"] = lng;
-//       obj[key]["date"] = date;
-
-//       //Google sheet as database
-//       const auth = new google.auth.GoogleAuth({
-//         keyFile: "credentials.json",
-//         scopes: "https://www.googleapis.com/auth/spreadsheets",
-//       });
-//       const client = await auth.getClient();
-//       const googleSheets = google.sheets({ version: "v4", auth: client });
-//       const spreadsheetsID = "1sAVZkd4xaaDIdiutBRzq51k3GGlcNUv_ZDfxq-JllW0";
-
-//       await googleSheets.spreadsheets.values.append({
-//         auth,
-//         spreadsheetId: spreadsheetsID,
-//         range: "Sheet3!A:U",
-//         valueInputOption: "USER_ENTERED",
-//         resource: {
-//           values: [
-//             [
-//               userdata.name,
-//               userdata.email,
-//               userdata.country,
-//               userdata.phone,
-//               date,
-//               lat,
-//               lng,
-//               obj[key].nitrate,
-//               obj[key].fluoride,
-//               obj[key].hazard_index.male,
-//               obj[key].hazard_index.female,
-//               obj[key].hazard_index.child,
-//             ],
-//           ],
-//         },
-//       });
-//     }
-//     res.render("outputhi", { data: JSON.stringify(obj) });
-//   }
-// });
 
 app.listen(port, () => {
-  console.log(`Running at http://localhost:${port}`);
+  console.log(`TTT Running at http://localhost:${port}`);
 });

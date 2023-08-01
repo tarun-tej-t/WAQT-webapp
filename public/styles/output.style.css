@@ -5,32 +5,34 @@
 }
 
 body {
-    background-image: url('/img/background.jpg');
-    background-color: rgba(255, 255, 255, 0.1);
+    
+    background-color: rgba(0, 255, 255, 0.705);
     height: 100vh;
 }
 
 
+.hidden {
+  display: none;
+}
 
 
 
-
-#myDiv1 {
+/* #myDiv1 {
+    display: none; /* hide the div by default 
+  }
+   */
+  /* #myCheckbox1:checked ~ #myDiv1 {
+    display: block; /* show the div when the checkbox is checked 
+  }
+   */
+  /* #myDiv2 {
     display: none; /* hide the div by default */
-  }
+  /* } */
   
-  #myCheckbox1:checked ~ #myDiv1 {
+  /* #myCheckbox2:checked ~ #myDiv2 {
     display: block; /* show the div when the checkbox is checked */
-  }
-  
-  #myDiv2 {
-    display: none; /* hide the div by default */
-  }
-  
-  #myCheckbox2:checked ~ #myDiv2 {
-    display: block; /* show the div when the checkbox is checked */
-  }
-  
+  /* } */ */
+   */
 
 
 

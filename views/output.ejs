@@ -6,6 +6,7 @@
     <script src="/scripts/wilcox.js"></script>
 
 <main class="overflow-auto">
+    
     <div class="container text-center">
         <h3 class="fw-bold pt-2 text-white">Water Quality Status</h3>
     </div>
@@ -15,9 +16,7 @@
         </select>
     </div>
     <div class="container d-flex flex-column">
-        <!-- <div class="row w-100 text-center mt-3 text-white bg-primary align-self-center">
-            <h3 class="wqi_header">Sample Location</h3>
-        </div> -->
+       
         
         <div id="siteMap" style="height: 33rem;"></div>
     </div>
@@ -212,12 +211,27 @@
             url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + data[key].latitude + "&lon=" + data[key].longitude + "";
             urls.push(url);
         }
+//         rows.forEach((row) => {
+//             url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + row.Latitude + "&lon=" + row.Longitude + "";
+//             urls.push(url);
+//     // Output any other columns you need here
+//   });
+
+
         for (var key in data) {
             const option = document.createElement('option');
             option.value = data[key]["date"].split("-")[0];
             option.textContent = data[key]["date"].split("-")[0];
             select_year.appendChild(option);
         }
+//         rows.forEach((row) => {
+//             const option = document.createElement('option');
+//             option.value = row.Date.split("-")[0];
+//             option.textContent = row.Date.split("-")[0];
+//             select_year.appendChild(option);
+//     // Output any other columns you need here
+//   });
+
         function getAddress(url) {
             return fetch(url)
                 .then(res => {
